@@ -1,5 +1,4 @@
 mod logic;
-mod utils;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::{Clamped, JsCast};
 use web_sys::ImageData;
@@ -7,11 +6,10 @@ use web_sys::ImageData;
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 #[wasm_bindgen]
 extern "C" {
     #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
+    fn log(a: &str);
 }
 
 macro_rules! console_log {
@@ -19,7 +17,7 @@ macro_rules! console_log {
 }
 
 macro_rules! measure_elapsed_time {
-    ($t:tt, $s:block) => {{
+    ($t:tt,$s:block) => {{
         let window = web_sys::window().expect("should have a window in this context");
         let performance = window
             .performance()
@@ -73,7 +71,6 @@ pub fn draw_mandelbrot_set() {
     let mut result = measure_elapsed_time!("\tgenerate:wasm\telapsed:", {
         logic::generate_mandelbrot_set(canvas_w, canvas_h, X_MIN, X_MAX, Y_MIN, Y_MAX, MAX_ITER)
     });
-
     measure_elapsed_time!("\tdraw:wasm\telapsed:", {
         let data = ImageData::new_with_u8_clamped_array_and_sh(
             Clamped(&mut result),
