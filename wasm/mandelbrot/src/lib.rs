@@ -37,7 +37,7 @@ macro_rules! measure_elapsed_time {
         let start = performance.now();
         let result = { $s };
         let end = performance.now();
-        console_log!("{}:{}ms", $t, end - start);
+        console_log!("{}: {}ms", $t, end - start);
         result
     }};
 }
@@ -52,7 +52,7 @@ pub fn generate_mandelbrot_set(
     y_max: f64,
     max_iter: usize,
 ) -> Vec<u8> {
-    measure_elapsed_time!("generate:wasm\telapsed:", {
+    measure_elapsed_time!("generate:wasm:", {
         logic::generate_mandelbrot_set(canvas_w, canvas_h, x_min, x_max, y_min, y_max, max_iter)
     })
 }
@@ -80,10 +80,10 @@ pub fn draw_mandelbrot_set() {
     const Y_MAX: f64 = 1.0;
     const MAX_ITER: usize = 1 << 7 - 1;
 
-    let mut result = measure_elapsed_time!("\tgenerate:wasm\telapsed:", {
+    let mut result = measure_elapsed_time!("generate:wasm:", {
         logic::generate_mandelbrot_set(canvas_w, canvas_h, X_MIN, X_MAX, Y_MIN, Y_MAX, MAX_ITER)
     });
-    measure_elapsed_time!("\tdraw:wasm\telapsed:", {
+    measure_elapsed_time!("draw:wasm:", {
         let data = ImageData::new_with_u8_clamped_array_and_sh(
             Clamped(&mut result),
             canvas.width(),

@@ -1,4 +1,5 @@
-import draw, { MAX_ITER, X_MAX, X_MIN, Y_MAX, Y_MIN } from './drawer'
+import { drawMandelbrotSet as drawMandelbrotSetJs, MAX_ITER, X_MAX, X_MIN, Y_MAX, Y_MIN } from './drawer'
+import { generateMandelbrotSet as generateMandelbrotSetJs } from './logic'
 
 import('../wasm/mandelbrot/pkg/mandelbrot')
   .catch((err) => {
@@ -36,19 +37,31 @@ import('../wasm/mandelbrot/pkg/mandelbrot')
         const canvasWidth = canvas.width
         const canvasHeight = canvas.height
 
-        const generateStartTime = Date.now()
         const wasmResult = generateMandelbrotSetWasm(canvasWidth, canvasHeight, X_MIN, X_MAX, Y_MIN, Y_MAX, MAX_ITER)
-        const generateElapsedTime = Date.now() - generateStartTime
 
         const drawStartTime = Date.now()
-        draw(context, canvasWidth, canvasHeight, wasmResult)
+        drawMandelbrotSetJs(context, canvasWidth, canvasHeight, wasmResult)
         const drawElapsedTime = Date.now() - drawStartTime
 
-        console.log(`\tgenerated:wasm\tgenerate_elapsed:${generateElapsedTime}ms`)
-        console.log(`\tdraw:  js\tdraw_elapsed:${drawElapsedTime}ms`)
+        console.log(`draw:js: ${drawElapsedTime}ms`)
       }
       {
         // generating and drawing with js
+        const canvas = document.getElementById('canvas_js') as HTMLCanvasElement
+        const context = canvas.getContext('2d')
+        const canvasWidth = canvas.width
+        const canvasHeight = canvas.height
+
+        const generateStartTime = Date.now()
+        const jsResult = generateMandelbrotSetJs(canvasWidth, canvasHeight, X_MIN, X_MAX, Y_MIN, Y_MAX, MAX_ITER)
+        const generateElapsedTime = Date.now() - generateStartTime
+
+        const drawStartTime = Date.now()
+        drawMandelbrotSetJs(context, canvasWidth, canvasHeight, jsResult)
+        const drawElapsedTime = Date.now() - drawStartTime
+
+        console.log(`generate:js: ${generateElapsedTime}ms`)
+        console.log(`draw:js: ${drawElapsedTime}ms`)
       }
     })
   })
